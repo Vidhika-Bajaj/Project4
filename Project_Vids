@@ -1,0 +1,57 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Create_and_mint_Token_by_Vids {
+    string public my_own_token;
+    uint256 private V_Token_total_Supply;
+    mapping(address => uint256) private _balances;
+    
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Burn(address indexed account, uint256 amount);
+    event Mint(address indexed account, uint256 amount);
+
+    constructor(string memory OwnToken, uint256 VTotalSupply) {
+        my_own_token = OwnToken;
+        V_Token_total_Supply = VTotalSupply;
+        _balances[msg.sender] = V_Token_total_Supply;
+        emit Transfer(address(0), msg.sender, V_Token_total_Supply);
+    }
+
+    function V_Total_Supply() external view returns (uint256) {
+        return V_Token_total_Supply;
+    }
+
+    function balanceOf(address account) external view returns (uint256) {
+        return _balances[account];
+    }
+
+    function transfer(address recipient, uint256 amount) external returns (bool) {
+        _transfer(msg.sender, recipient, amount);
+        return true;
+    }
+
+    function burn(uint256 amount) external returns (bool) {
+        require(amount <= _balances[msg.sender], "Asked balance not present");
+        _balances[msg.sender] -= amount;
+        V_Token_total_Supply -= amount;
+        emit Burn(msg.sender, amount);
+        emit Transfer(msg.sender, address(0), amount);
+        return true;
+    }
+
+    function mint(address account, uint256 amount) external returns (bool) {
+        V_Token_total_Supply += amount;
+        _balances[account] += amount;
+        emit Mint(account, amount);
+        emit Transfer(address(0), account, amount);
+        return true;
+    }
+
+    function _transfer(address sender, address recipient, uint256 amount) internal {
+        require(amount <= _balances[sender], "Balance not present");
+
+        _balances[sender] -= amount;
+        _balances[recipient] += amount;
+        emit Transfer(sender, recipient, amount);
+    }
+}               
