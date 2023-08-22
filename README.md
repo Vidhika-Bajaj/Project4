@@ -1,5 +1,5 @@
 # Create and mint Toekn
-This token contract program tells about the transaction of tokens by burning, adding or transferring tokens using various functions and events like mint, burn, transfer, Total_Supply, balanceOf, etc.
+This token contract programme describes token transactions via minting, burning, transferring, adding, or using various functions and events like Total_Supply, balanceOf, and so on.
 ## Description
 
 This programme is a straightforward contract for producing and minting tokens. It asks for information about the token, such as its name, total supply, and balance, and returns results in accordance. It has three events: Mint (for adding tokens), Burn (for burning tokens), and Transfer (for transferring tokens). OwnToken and VTotalSupply, which are stored in my_own_token and V_Token_total_Supply and whose value is likewise saved in balances, are the constructor's next two parameters. Six functions are then available: V_Total_Supply() for returning the V_Token_total_Supply value, balanceOf for returning the account balance, transfer for transferring tokens, burn for burning the specified amount of tokens from the account and updating the current value afterwards, and mint for adding new tokens.
