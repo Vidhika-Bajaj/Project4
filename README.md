@@ -11,24 +11,24 @@ This programme is a straightforward contract for producing and minting tokens. I
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract Create_and_mint_Token_by_Vids {
-    string public my_own_token;
-    uint256 private V_Token_total_Supply;
+contract Token_by_Vids {
+    string public V_token;
+    uint256 private V_total_Supply;
     mapping(address => uint256) private _balances;
     
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Burn(address indexed account, uint256 amount);
     event Mint(address indexed account, uint256 amount);
 
-    constructor(string memory OwnToken, uint256 VTotalSupply) {
-        my_own_token = OwnToken;
-        V_Token_total_Supply = VTotalSupply;
-        _balances[msg.sender] = V_Token_total_Supply;
-        emit Transfer(address(0), msg.sender, V_Token_total_Supply);
+    constructor(string memory Vids_Token, uint256 VTotalSupply) {
+        V_token = Vids_Token
+        V_total_Supply = VTotalSupply;
+        _balances[msg.sender] = V_total_Supply;
+        emit Transfer(address(0), msg.sender, V_total_Supply);
     }
 
-    function V_Total_Supply() external view returns (uint256) {
-        return V_Token_total_Supply;
+    function Total_Supply() external view returns (uint256) {
+        return V_total_Supply;
     }
 
     function balanceOf(address account) external view returns (uint256) {
@@ -43,14 +43,15 @@ contract Create_and_mint_Token_by_Vids {
     function burn(uint256 amount) external returns (bool) {
         require(amount <= _balances[msg.sender], "Asked balance not present");
         _balances[msg.sender] -= amount;
-        V_Token_total_Supply -= amount;
+        V_total_Supply -= amount;
         emit Burn(msg.sender, amount);
         emit Transfer(msg.sender, address(0), amount);
         return true;
     }
 
     function mint(address account, uint256 amount) external returns (bool) {
-        V_Token_total_Supply += amount;
+        require(account!= address(0), "Account address incorrect");
+        V_total_Supply += amount;
         _balances[account] += amount;
         emit Mint(account, amount);
         emit Transfer(address(0), account, amount);
@@ -58,7 +59,7 @@ contract Create_and_mint_Token_by_Vids {
     }
 
     function _transfer(address sender, address recipient, uint256 amount) internal {
-        require(amount <= _balances[sender], "Balance not present");
+        require(amount <= _balances[sender], "Balance not present to transfer");
 
         _balances[sender] -= amount;
         _balances[recipient] += amount;
