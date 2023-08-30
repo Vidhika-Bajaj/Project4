@@ -11,61 +11,30 @@ This programme is a straightforward contract for producing and minting tokens. I
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract Token_by_Vids {
-    string public V_token;
-    uint256 private V_total_Supply;
-    mapping(address => uint256) private _balances;
-    
-    event Transfer(address indexed from, address indexed to, uint256 value);
-    event Burn(address indexed account, uint256 amount);
-    event Mint(address indexed account, uint256 amount);
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-    constructor(string memory Vids_Token, uint256 VTotalSupply) {
-        V_token = Vids_Token
-        V_total_Supply = VTotalSupply;
-        _balances[msg.sender] = V_total_Supply;
-        emit Transfer(address(0), msg.sender, V_total_Supply);
+contract Vids_Token is ERC20 {
+    address public owner;
+
+    constructor(string memory name, string memory symbol) ERC20(name, symbol) {
+        owner = msg.sender;
+        _mint(msg.sender, 1000000 * 10 ** decimals());
     }
 
-    function Total_Supply() external view returns (uint256) {
-        return V_total_Supply;
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only the owner can call this function");
+        _;
     }
 
-    function balanceOf(address account) external view returns (uint256) {
-        return _balances[account];
+    function mint(address to, uint256 amount) external onlyOwner {
+        _mint(to, amount);
     }
 
-    function transfer(address recipient, uint256 amount) external returns (bool) {
-        _transfer(msg.sender, recipient, amount);
-        return true;
+    function burn(uint256 amount) external {
+        _burn(msg.sender, amount);
     }
-
-    function burn(uint256 amount) external returns (bool) {
-        require(amount <= _balances[msg.sender], "Asked balance not present");
-        _balances[msg.sender] -= amount;
-        V_total_Supply -= amount;
-        emit Burn(msg.sender, amount);
-        emit Transfer(msg.sender, address(0), amount);
-        return true;
-    }
-
-    function mint(address account, uint256 amount) external returns (bool) {
-        require(account!= address(0), "Account address incorrect");
-        V_total_Supply += amount;
-        _balances[account] += amount;
-        emit Mint(account, amount);
-        emit Transfer(address(0), account, amount);
-        return true;
-    }
-
-    function _transfer(address sender, address recipient, uint256 amount) internal {
-        require(amount <= _balances[sender], "Balance not present to transfer");
-
-        _balances[sender] -= amount;
-        _balances[recipient] += amount;
-        emit Transfer(sender, recipient, amount);
-    }
-}               
+}
+               
 ```
 To compile the code, click on the "Solidity Compiler" tab in the left-hand sidebar. Make sure the "Compiler" option is set to "0.8.4" (or another compatible version), and then click on the "Compile Vids_project_M3.sol" button.
 
