@@ -9,29 +9,41 @@ This programme is a straightforward contract for producing and minting tokens. I
        
 ```javascript
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.18;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Vids_Token is ERC20 {
-    address public owner;
+contract MyToken is ERC20("My ERC TOKEN", "MET"), Ownable {
+    
+    event Burn(address indexed account, uint256 amount);
 
-    constructor(string memory name, string memory symbol) ERC20(name, symbol) {
-        owner = msg.sender;
-        _mint(msg.sender, 1000000 * 10 ** decimals());
+    constructor(uint256 initialSupply) {
+        _mint(msg.sender, initialSupply);
     }
-
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only the owner can call this function");
-        _;
+    
+    function mintToken(address recipient, uint256 amount) external onlyOwner {
+        require(recipient != address(0), "Invalid recipient address");
+        _mint(recipient, amount);
+        emit Transfer(address(0), recipient, amount);
     }
-
-    function mint(address to, uint256 amount) external onlyOwner {
-        _mint(to, amount);
-    }
-
-    function burn(uint256 amount) external {
+    
+    function burnToken(uint256 amount) external {
         _burn(msg.sender, amount);
+        emit Burn(msg.sender, amount);
+    }
+
+    function getMyTokenTotalSupply() external view returns (uint256) {
+        return super.totalSupply();
+    }
+
+    function getMyTokenBalance(address account) external view returns (uint256) {
+        return super.balanceOf(account);
+    }
+
+    function transferToken(address recipient, uint256 amount) external returns (bool) {
+        _transfer(msg.sender, recipient, amount);
+        return true;
     }
 }
                
